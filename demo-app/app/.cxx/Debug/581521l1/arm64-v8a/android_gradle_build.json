@@ -1,0 +1,38 @@
+{
+  "buildFiles": [
+    "/data/data/com.termux/files/home/demo-app/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/data/data/com.termux/files/home/opt/android-sdk/cmake/bin/ninja",
+      "-C",
+      "/data/data/com.termux/files/home/demo-app/app/.cxx/Debug/581521l1/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/data/data/com.termux/files/home/opt/android-sdk/cmake/bin/ninja",
+    "-C",
+    "/data/data/com.termux/files/home/demo-app/app/.cxx/Debug/581521l1/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "demo::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "demo",
+      "output": "/data/data/com.termux/files/home/demo-app/app/build/intermediates/cxx/Debug/581521l1/obj/arm64-v8a/libdemo.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/data/data/com.termux/files/home/opt/android-ndk-r29/toolchains/llvm/prebuilt/linux-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/data/data/com.termux/files/home/opt/android-ndk-r29/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22)
+project(demo)
+add_library(demo SHARED demo.cpp)
+find_library(log-lib log)
+target_link_libraries(demo ${log-lib})

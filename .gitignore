@@ -1,0 +1,5 @@
+demo-app/build/
+demo-app/.gradle/
+demo-app/app/build/
+demo-app/local.properties
+*.apk
