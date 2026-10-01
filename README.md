@@ -131,17 +131,18 @@ cd ~/my-app
 
 Terminal me `termux-studio` likho — interactive menu milega:
 
+Project directory me CD karke `termux-studio` chalane par **Project mode** khulta hai:
+
 ```
- 1) Naya project create karo          (naam + package id poochega, template copy hoga)
- 2) Project build karo (Debug APK)    (./gradlew assembleDebug)
- 3) Release APK build karo            (./gradlew assembleRelease)
- 4) APK output kahaan se milega       (debug/release APK paths print karega)
- 5) APK phone me install karo (adb)   (adb install -r)
- 6) SD card me copy karo              (/sdcard pe copy)
- 7) SDK/NDK versions check karo       (java, ndk, clang, cmake, ninja)
- 8) Build tools list karo (sdkmanager)
- 9) Project clean karo                (./gradlew clean)
-10) Env info dikhao                   (JAVA_HOME, ANDROID_HOME, NDK, PATH)
+ 1) Build Debug APK        2) Build Release APK
+ 3) Rebuild                4) Clean
+ 5) APK output paths       6) adb install
+ 7) App open karo          8) SD card me copy
+ 9) Project info/versions 10) Bahar jao
 ```
+
+Home directory me **Home mode**: naya project banao ya project list dekho.
+Naya project banne ke baad `cd project-naam && termux-studio` karke project
+mode me aa jaao — fir sirf project se related options milenge, jaise Android Studio me.
 
 APK jahan milta hai: `<project>/app/build/outputs/apk/debug/app-debug.apk`

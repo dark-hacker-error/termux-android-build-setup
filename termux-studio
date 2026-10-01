@@ -1,101 +1,91 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Termux Android Studio-like menu
-set -e
-source ~/.android-env 2>/dev/null
+# Termux Android Studio-like menu (project aware)
+[ -f ~/.android-env ] && source ~/.android-env
 [ -f ~/.bashrc ] && source ~/.bashrc >/dev/null 2>&1
-
 SDK=$ANDROID_HOME
 NDK=$ANDROID_NDK_HOME
 
-while true; do
-clear 2>/dev/null || true
-echo "============================================"
-echo "   TERMUX ANDROID STUDIO (light)"
-echo "============================================"
-echo " 1) Naya project create karo"
-echo " 2) Project build karo (Debug APK)"
-echo " 3) Release APK build karo"
-echo " 4) APK output kahaan se milega (locate)"
-echo " 5) APK phone me install karo (adb)"
-echo " 6) SD card me copy karo"
-echo " 7) SDK/NDK versions check karo"
-echo " 8) Build tools list karo (sdkmanager)"
-echo " 9) Project clean karo"
-echo "10) Env info dikhao"
-echo " 0) Exit"
-echo "============================================"
-read -p "Option: " opt
-case $opt in
-1)
+is_project() { [ -f "$PWD/settings.gradle" ] && [ -d "$PWD/app" ]; }
+
+find_apk() { find "$PWD/app/build/outputs/apk" -name '*.apk' 2>/dev/null; }
+
+create_project() {
   read -p "Project ka naam: " name
   read -p "Package id (ex: com.example.myapp): " pkg
-  dest=~/$name
-  cp -r ~/demo-app $dest
-  cd $dest
-  sed -i "s/com.example.demo/$pkg/" app/build.gradle app/src/main/AndroidManifest.xml app/src/main/java/com/example/demo/MainActivity.java settings.gradle
-  mkdir -p app/src/main/java/$(echo $pkg | tr . /)
-  mv app/src/main/java/com/example/demo/MainActivity.java app/src/main/java/$(echo $pkg | tr . /)/ 2>/dev/null
-  rmdir app/src/main/java/com/example/demo 2>/dev/null
-  rm -f app/build.gradle.bak
+  dest=~/"$name"
+  [ -d "$dest" ] && { echo "Pehle se hai: $dest"; return; }
+  cp -r ~/demo-app "$dest"
+  rm -rf "$dest/build" "$dest/app/build" "$dest/.gradle" "$dest/gradle.bat"
+  cd "$dest"
+  grep -rl "com.example.demo" app/build.gradle app/src/main/AndroidManifest.xml app/src/main/java settings.gradle | xargs sed -i "s/com.example.demo/$pkg/g"
+  mkdir -p "app/src/main/java/$(echo $pkg | tr . /)"
+  mv "app/src/main/java/com/example/demo/MainActivity.java" "app/src/main/java/$(echo $pkg | tr . /)/"
+  rm -rf app/src/main/java/com
   cat > local.properties <<LP
 sdk.dir=$SDK
 ndk.dir=$NDK
 cmake.dir=$SDK/cmake
 LP
-  echo "Ban gaya: $dest"
-  ;;
-2)
-  read -p "Project directory (ex: ~/demo-app): " p
-  cd "${p/#\~/$HOME}" && ./gradlew assembleDebug
-  echo "APK: $(find $PWD/app/build/outputs/apk/debug -name '*.apk')"
-  ;;
-3)
-  read -p "Project directory (ex: ~/demo-app): " p
-  cd "${p/#\~/$HOME}" && ./gradlew assembleRelease
-  echo "APK: $(find $PWD/app/build/outputs/apk/release -name '*.apk')"
-  ;;
-4)
-  read -p "Project directory (ex: ~/demo-app): " p
-  p="${p/#\~/$HOME}"
-  echo "Debug APK:"; find $p/app/build/outputs/apk/debug -name '*.apk' 2>/dev/null
-  echo "Release APK:"; find $p/app/build/outputs/apk/release -name '*.apk' 2>/dev/null
-  ;;
-5)
-  read -p "Project directory: " p
-  p="${p/#\~/$HOME}"
-  apk=$(find $p/app/build/outputs/apk/debug -name '*.apk' | head -1)
-  adb install -r "$apk"
-  ;;
-6)
-  read -p "Project directory: " p
-  p="${p/#\~/$HOME}"
-  apk=$(find $p/app/build/outputs/apk -name '*.apk' | head -1)
-  cp "$apk" /sdcard/
-  echo "Copied: /sdcard/$(basename $apk)"
-  ;;
-7)
-  java -version 2>&1 | head -1
-  sdkmanager --list_installed 2>/dev/null | grep -E "build-tools|platforms;android-35|platform-tools" | head -5
-  echo "NDK: $(cat $NDK/source.properties | grep Revision)"
-  $SDK/build-tools/35.0.1/aapt2 version 2>/dev/null | head -1
-  $NDK/toolchains/llvm/prebuilt/linux-aarch64/bin/clang --version | head -1
-  cmake --version | head -1; ninja --version
-  ;;
-8)
-  sdkmanager --list_installed
-  ;;
-9)
-  read -p "Project directory: " p
-  cd "${p/#\~/$HOME}" && ./gradlew clean
-  ;;
-10)
-  echo "JAVA_HOME=$JAVA_HOME"
-  echo "ANDROID_HOME=$ANDROID_HOME"
-  echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
-  echo "PATH=$PATH" | tr ':' '\n' | grep -E "android|jdk|opt"
-  ;;
-0) exit 0;;
-*) echo "Galat option";;
-esac
-read -p "Enter dabana..." _
+  cd "$dest"
+  echo "Ban gaya: $dest (cd $name karke wapas termux-studio chalao)"
+}
+
+project_info() {
+  echo "--- Project: $PWD"
+  grep -E "applicationId|compileSdk|targetSdk|minSdk|ndkVersion" app/build.gradle | head -6
+  echo "Java: $(java -version 2>&1 | head -1)"
+  find_apk | sed 's/^/APK: /'
+}
+
+while true; do
+  clear 2>/dev/null || true
+  echo "========================================="
+  if is_project; then
+    echo " PROJECT MODE: $PWD"
+    echo "========================================="
+    echo " 1) Build Debug APK"
+    echo " 2) Build Release APK"
+    echo " 3) Rebuild (clean + debug)"
+    echo " 4) Clean project"
+    echo " 5) APK output kahaan se milega"
+    echo " 6) APK install karo (adb)"
+    echo " 7) App open karo (adb start)"
+    echo " 8) APK SD card me copy karo"
+    echo " 9) Project info / versions"
+    echo "10) Wapas home (project se bahar)"
+  else
+    echo " TERMUX STUDIO (home)"
+    echo "========================================="
+    echo " 1) Naya project create karo"
+    echo " 2) Project list dikhaun + kholo"
+    echo " 3) Project me jaane ke liye cd karke fir termux-studio chalao"
+  fi
+  echo " 0) Exit"
+  echo "========================================="
+  read -p "Option: " opt
+  if is_project; then
+    case $opt in
+      1) ./gradlew assembleDebug ;;
+      2) ./gradlew assembleRelease ;;
+      3) ./gradlew clean assembleDebug ;;
+      4) ./gradlew clean ;;
+      5) find_apk ;;
+      6) apk=$(find_apk | head -1); [ -z "$apk" ] && echo "Pehle build karo" || adb install -r "$apk" ;;
+      7) pkg=$(grep applicationId app/build.gradle | sed "s/.*'\(.*\)'/\1/"); adb shell monkey -p "$pkg" -c android.intent.category.LAUNCHER 1 ;;
+      8) apk=$(find_apk | head -1); [ -z "$apk" ] && echo "Pehle build karo" || { cp "$apk" /sdcard/; echo "/sdcard/$(basename $apk)"; } ;;
+      9) project_info ;;
+      10) cd ~ ;;
+      0) exit 0 ;;
+      *) echo "Galat option" ;;
+    esac
+  else
+    case $opt in
+      1) create_project ;;
+      2) ls -d ~/*/ | while read d; do [ -f "$d/settings.gradle" ] && echo "  $d"; done ;;
+      3) echo "cd ~/project-naam && termux-studio" ;;
+      0) exit 0 ;;
+      *) echo "Galat option" ;;
+    esac
+  fi
+  read -p "Enter dabana..." _
 done
