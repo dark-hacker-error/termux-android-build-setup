@@ -57,3 +57,8 @@ sdk.dir=/data/data/com.termux/files/home/opt/android-sdk
 ndk.dir=/data/data/com.termux/files/home/opt/android-ndk-r29
 cmake.dir=/data/data/com.termux/files/home/opt/android-sdk/cmake
 LP
+
+# Install Android Studio-like menu tool
+cp ~/android-build-setup/termux-studio $PREFIX/bin/termux-studio
+chmod +x $PREFIX/bin/termux-studio
+echo "Menu tool installed: run 'termux-studio'"

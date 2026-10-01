@@ -124,3 +124,24 @@ cd ~/my-app
 ## Credits
 
 - NDK/SDK aarch64: [lzhiyong/termux-ndk](https://github.com/lzhiyong/termux-ndk)
+
+---
+
+## termux-studio (Android Studio jaisa menu)
+
+Terminal me `termux-studio` likho — interactive menu milega:
+
+```
+ 1) Naya project create karo          (naam + package id poochega, template copy hoga)
+ 2) Project build karo (Debug APK)    (./gradlew assembleDebug)
+ 3) Release APK build karo            (./gradlew assembleRelease)
+ 4) APK output kahaan se milega       (debug/release APK paths print karega)
+ 5) APK phone me install karo (adb)   (adb install -r)
+ 6) SD card me copy karo              (/sdcard pe copy)
+ 7) SDK/NDK versions check karo       (java, ndk, clang, cmake, ninja)
+ 8) Build tools list karo (sdkmanager)
+ 9) Project clean karo                (./gradlew clean)
+10) Env info dikhao                   (JAVA_HOME, ANDROID_HOME, NDK, PATH)
+```
+
+APK jahan milta hai: `<project>/app/build/outputs/apk/debug/app-debug.apk`
