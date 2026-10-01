@@ -8,7 +8,7 @@ SDK=$ANDROID_HOME
 NDK=$ANDROID_NDK_HOME
 
 while true; do
-clear
+clear 2>/dev/null || true
 echo "============================================"
 echo "   TERMUX ANDROID STUDIO (light)"
 echo "============================================"
