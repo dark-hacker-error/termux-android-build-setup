@@ -127,22 +127,21 @@ cd ~/my-app
 
 ---
 
-## termux-studio (Android Studio jaisa menu)
+## termux-studio — Android Studio jaisa tool
 
-Terminal me `termux-studio` likho — interactive menu milega:
+Terminal me `termux-studio` likho. Nayi app `~/termux-studio/` folder me banti
+hai (permanent project folder).
 
-Project directory me CD karke `termux-studio` chalane par **Project mode** khulta hai:
+**Flow bilkul Android Studio jaisa:**
 
-```
- 1) Build Debug APK        2) Build Release APK
- 3) Rebuild                4) Clean
- 5) APK output paths       6) adb install
- 7) App open karo          8) SD card me copy
- 9) Project info/versions 10) Bahar jao
-```
+1. Home mode me `1` dabao → naam + package name do
+2. Project bante hi aap **usi project ke andar** ho — menu abhi project mode me aa jata hai
+3. `1` dabao → Debug APK build → success hote hi 2 sec me waapas menu,
+   APK ka path bhi dikhata hai
+4. Wahi se adb install (`6`), app open (`7`), SD card copy (`8`) karo
 
-Home directory me **Home mode**: naya project banao ya project list dekho.
-Naya project banne ke baad `cd project-naam && termux-studio` karke project
-mode me aa jaao — fir sirf project se related options milenge, jaise Android Studio me.
+APK hamesha yahan milta hai:
+`~/termux-studio/<Project>/app/build/outputs/apk/debug/app-debug.apk`
 
-APK jahan milta hai: `<project>/app/build/outputs/apk/debug/app-debug.apk`
+Menu colored hai, create karte waqt spinner dikhता hai, build success green
+✔, failure red ✘ ke saath.
